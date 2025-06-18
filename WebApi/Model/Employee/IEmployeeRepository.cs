@@ -6,9 +6,11 @@ namespace WebApi.Model.Employee {
 
 		void Add(Employee employee);
 
-		List<Employee> GetAll();
+		List<Employee?> GetAll();
 
-		Employee GetById(int id);
+		Employee? GetById(int id);
+
+		Employee? Update(Employee employee);
 
 		void Delete(Employee employee);
 

@@ -1,10 +1,15 @@
 ﻿namespace WebApi.ViewModel {
 
-	public class EmployeeViewModel {
-	
-		public string Name { get; set; }
-		public string Age { get; set; }	
+	public class EmployeeCommand {
 
+		public required string Name { get; set; }
+		public required string Age { get; set; }
+		public string? Photo { get; set; }
+
+	}
+
+	public class EmployeeViewModel : EmployeeCommand {
+		public required int Id { get; set; }
 	}
 
 }

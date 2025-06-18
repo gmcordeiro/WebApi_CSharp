@@ -10,12 +10,21 @@ namespace WebApi.Infrastructure {
 			_context.SaveChanges();
 		}
 
-		public List<Employee> GetAll() {
+		public Employee? Update(Employee employee) {
+
+			var updateEmployee = _context.Employees.Update(employee).Entity;
+			_context.SaveChanges();
+
+			return updateEmployee;
+
+		}
+
+		public List<Employee?> GetAll() {
 			return [.. _context.Employees];
 		}
 
-		public Employee GetById(int id) {
-			return _context.Employees.FirstOrDefault(e => e.Id == id) ?? new Employee();
+		public Employee? GetById(int id) {
+			return _context.Employees.FirstOrDefault(e => e.Id == id) ?? null;
 		}
 
 		public void Delete(Employee employee) {
