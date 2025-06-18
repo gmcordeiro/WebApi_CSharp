@@ -28,7 +28,31 @@ namespace WebApi.Controllers {
 				Name = e.Name,
 				Age = e.Age.ToString()
 			}).ToList();
-			return Ok(employees);
+			return Ok(employeeViewModels);
+		}
+
+		[HttpGet("{id}")]
+		public IActionResult GetById(int id) {
+			var employee = _employeeRepository.GetById(id);
+			if (employee == null) {
+				return NotFound();
+			}
+			var employeeViewModel = new EmployeeViewModel {
+				Name = employee.Name,
+				Age = employee.Age.ToString()
+			};
+			return Ok(employeeViewModel);
+		}
+
+		[HttpDelete]
+		public IActionResult Delete(int id) {
+			var employees = _employeeRepository.GetAll();
+			var employee = employees.FirstOrDefault(e => e.Id == id);
+			if (employee == null) {
+				return NotFound();
+			}
+			_employeeRepository.Delete(employee);
+			return Ok();
 		}
 
 	}

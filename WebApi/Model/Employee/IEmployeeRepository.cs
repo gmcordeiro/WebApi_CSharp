@@ -8,5 +8,9 @@ namespace WebApi.Model.Employee {
 
 		List<Employee> GetAll();
 
+		Employee GetById(int id);
+
+		void Delete(Employee employee);
+
 	}
 }
