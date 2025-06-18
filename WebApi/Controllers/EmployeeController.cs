@@ -11,12 +11,14 @@ namespace WebApi.Controllers {
 		private readonly IEmployeeRepository _employeeRepository = employeeRepository;
 
 		[HttpPost]
-		public IActionResult Add(EmployeeCommand employeeView) {
+		public IActionResult Add([FromForm] EmployeeCommand employeeView) {
+
+			string filePath = GetFilePath(employeeView);
 
 			var employee = new Employee(
 				name: employeeView.Name,
 				age: int.Parse(employeeView.Age),
-				photo: employeeView.Photo
+				photo: filePath
 			);
 
 			_employeeRepository.Add(employee);
@@ -33,9 +35,14 @@ namespace WebApi.Controllers {
 				return NotFound();
 			}
 
+			var filePath = GetFilePath(employeeCommand);
+			if (string.IsNullOrEmpty(filePath)) {
+				filePath = employee.Photo;
+			}
+
 			employee.Age = int.Parse(employeeCommand.Age);
 			employee.Name = employeeCommand.Name;
-			employee.Photo = employeeCommand.Photo;
+			employee.Photo = filePath;
 
 			employee = _employeeRepository.Update(employee);
 
@@ -48,10 +55,12 @@ namespace WebApi.Controllers {
 
 			var employees = _employeeRepository.GetAll();
 
+
 			var employeeViewModels = employees.Select(e => new EmployeeViewModel {
 				Id = e.Id,
 				Name = e.Name,
-				Age = e.Age.ToString()
+				Age = e.Age.ToString(),
+				Photo = GetFile(e.Photo)
 			}).ToList();
 
 			return Ok(employeeViewModels);
@@ -68,7 +77,8 @@ namespace WebApi.Controllers {
 			var employeeViewModel = new EmployeeViewModel {
 				Id = employee.Id,
 				Name = employee.Name,
-				Age = employee.Age.ToString()
+				Age = employee.Age.ToString(),
+				Photo = GetFile(employee.Photo)
 			};
 
 			return Ok(employeeViewModel);
@@ -88,6 +98,33 @@ namespace WebApi.Controllers {
 
 			return Ok();
 
+		}
+
+		private static string GetFilePath(EmployeeCommand employeeCommand) {
+			var filePath = string.Empty;
+
+			var hasPhoto = employeeCommand.Photo != null && employeeCommand.Photo.Length > 0;
+
+			if (hasPhoto) {
+				filePath = Path.Combine("Storage", employeeCommand.Photo.FileName);
+				using Stream fileStream = new FileStream(filePath, FileMode.Create);
+				employeeCommand.Photo.CopyTo(fileStream);
+			}
+
+			return filePath;
+		}
+
+		private static FormFile? GetFile(string filePath) {
+
+			if (string.IsNullOrEmpty(filePath)) {
+				return null;
+			}
+
+			var file = new FormFile(new MemoryStream(), 0, 0, "file", Path.GetFileName(filePath)) {
+				Headers = new HeaderDictionary(),
+				ContentType = "application/octet-stream"
+			};
+			return file;
 		}
 
 	}

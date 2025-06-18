@@ -4,7 +4,7 @@
 
 		public required string Name { get; set; }
 		public required string Age { get; set; }
-		public string? Photo { get; set; }
+		public IFormFile? Photo { get; set; }
 
 	}
 
