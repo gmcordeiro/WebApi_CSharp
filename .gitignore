@@ -363,4 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # Storage file folder
-Storage/*
+Storage/

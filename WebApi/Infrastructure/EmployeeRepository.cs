@@ -24,7 +24,7 @@ namespace WebApi.Infrastructure {
 		}
 
 		public Employee? GetById(int id) {
-			return _context.Employees.FirstOrDefault(e => e.Id == id) ?? null;
+			return _context.Employees.Find(id);
 		}
 
 		public void Delete(Employee employee) {

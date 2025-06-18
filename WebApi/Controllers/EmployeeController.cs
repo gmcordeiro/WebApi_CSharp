@@ -85,6 +85,28 @@ namespace WebApi.Controllers {
 
 		}
 
+		[HttpPost]
+		[Route("{id}/download")]
+		public IActionResult Download(int id) {
+
+			var employee = _employeeRepository.GetById(id);
+
+			if (employee == null || string.IsNullOrEmpty(employee.Photo)) {
+				return NotFound();
+			}
+
+			var filePath = employee.Photo;
+			if (!System.IO.File.Exists(filePath)) {
+				return NotFound();
+			}
+
+			var dataBytes = System.IO.File.ReadAllBytes(filePath);
+
+			return File(dataBytes, "image/png");
+
+		}
+
+
 		[HttpDelete]
 		public IActionResult Delete(int id) {
 
@@ -114,7 +136,7 @@ namespace WebApi.Controllers {
 			return filePath;
 		}
 
-		private static FormFile? GetFile(string filePath) {
+		private static FormFile? GetFile(string? filePath) {
 
 			if (string.IsNullOrEmpty(filePath)) {
 				return null;
